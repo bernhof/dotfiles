@@ -27,6 +27,9 @@ sudo dpkg -i /tmp/chrome.deb
 
 # vscode
 sudo snap install code --classic
+#code --install-extension mechatroner.rainbow-csv
+
+# slack
 sudo snap install slack --classic
 
 # JAVA DEV ENVIRONMENT
@@ -36,11 +39,16 @@ sudo snap install intellij-idea-ultimate --classic
 curl -s "https://get.sdkman.io" | bash
 source ~/.sdkman/bin/sdkman-init.sh
 
-# Disable Alt+F1 shortcut for home view (app switcher)
-# It clashes with the "Select In..." shortcut in IntelliJ IDEA
-if gsettings get org.gnome.desktop.wm.keybindings panel-main-menu | grep -Fxq "['<Alt>F1']"; then
-    gsettings set org.gnome.desktop.wm.keybindings panel-main-menu "[]"
-fi
+# Disable Alt+F1 shortcut for home view (clashes with the "Select In..." shortcut in IDEA on Visual Studio key scheme)
+KEYBINDINGS=$(gsettings get org.gnome.desktop.wm.keybindings panel-main-menu | sed "s/\(, \)\?'<Alt>F1'//")
+gsettings set org.gnome.desktop.wm.keybindings panel-main-menu $KEYBINDINGS
+
+# Disable Alt+F5 shortcut for unmaximize (clashes with "Debug Test" shortcut in IDEA on Visual Studio key scheme)
+KEYBINDINGS=$(gsettings get org.gnome.desktop.wm.keybindings unmaximize | sed "s/\(, \)\?'<Alt>F5'//")
+gsettings set org.gnome.desktop.wm.keybindings unmaximize $KEYBINDINGS
+
+# Show week no. in GNOME calendar
+gsettings set org.gnome.desktop.calendar show-weekdate true
 
 
 # NINE
