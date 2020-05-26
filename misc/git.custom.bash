@@ -34,27 +34,27 @@ git-prune-branches() {
     if [ ! -z "$merged" ] ; then
         echo "Deleting the following merged branches:"
         for branch in $merged ; do
-        echo "    " $branch
+            echo "    " $branch
         done
 
         all=n
         delete=n
         for branch in $merged ; do
-        if [ $all = 'n' ] ; then
+            if [ $all = 'n' ] ; then
                 delete=n
                 read -p "Delete $branch (y=yes, n=no, a=all)? " prompt
-            echo "all=$all delete=$delete prompt=$prompt"
+                echo "all=$all delete=$delete prompt=$prompt"
                 if [ "$prompt" = 'a' ] ; then
-            delete=y
-            all=y
-            elif [ "$prompt" = 'y' ]; then
-            delete=y
+                    delete=y
+                    all=y
+                elif [ "$prompt" = 'y' ]; then
+                    delete=y
+                fi
             fi
-        fi
 
-        if [ "$delete" = 'y' ] ; then
-            git branch -d $branch
-        fi
+            if [ "$delete" = 'y' ] ; then
+                git branch -d $branch
+            fi
         done
     fi
             
@@ -63,7 +63,7 @@ git-prune-branches() {
         prompt=n
         read -p "Prune deleted branches from remote '$remote' (y=yes n=no)? " prompt
         if [ "$prompt" = 'y' ] ; then
-        git remote prune $remote
+            git remote prune $remote
         fi
     done
 }
