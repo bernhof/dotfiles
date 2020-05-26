@@ -1,5 +1,19 @@
 # COPY
 # cp -v ~/.dotfiles/misc/custom.aliases.bash ~/.bash_it/aliases/
 
-# squash all commits into one (https://stackoverflow.com/a/47837371/137471)
-alias gisquash='git reset --soft HEAD~$(git rev-list --count HEAD ^master)'
+# Clipboard
+alias c='xclip -sel clip'
+alias v='xclip -o'
+
+# Gradle:
+alias gw='./gradlew'
+alias gwcb='./gradlew clean bootRun'
+alias gwcc='./gradlew clean check ; alert'
+alias gwct='./gradlew clean test integrationTest ; alert'
+alias gwcode='./gradlew codenarcAll'
+
+# Nice path
+alias path='echo -e ${PATH//:/\\n}'
+
+# From: http://askubuntu.com/questions/409611/desktop-notification-when-long-running-commands-complete
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'

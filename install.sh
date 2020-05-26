@@ -2,6 +2,8 @@
 
 # basic tools
 sudo apt install curl -y
+sudo apt install jq -y #command line json parser
+sudo apt install cifs-utils -y #CIFS/samba tools
 
 # docker
 # https://docs.docker.com/engine/install/ubuntu/
@@ -67,3 +69,16 @@ git ~/.bash_it/install.sh --silent
 
 bash-it enable plugin git sdkman
 bash-it enable completion bash-it git gradle grails sdkman system
+
+source misc/custom.aliases.bash
+copy-bash-it-custom
+
+# 1Password
+# https://app-updates.agilebits.com/product_history/CLI
+wget https://cache.agilebits.com/dist/1P/op/pkg/v1.0.0/op_linux_amd64_v1.0.0.zip -0 /tmp/op.zip
+unzip /tmp/op.zip -d /usr/local/bin/
+gpg --recv-keys 3FEF9748469ADBE15DA7CA80AC2D62742012EA22 #doesn't seem to work?
+gpg --verify /usr/local/bin/op.sig /usr/local/bin/op
+
+# ERST
+source erst/erst.install.sh
