@@ -9,8 +9,9 @@ alias v='xclip -o'
 alias gw='./gradlew'
 alias gwcb='./gradlew clean bootRun'
 alias gwcc='./gradlew clean check ; alert'
+alias gwccc='./gradlew clean check -DENABLE_CLOVER=true ; alert'
 alias gwct='./gradlew clean test integrationTest ; alert'
-alias gwcode='./gradlew codenarcAll'
+alias gwnarc='./gradlew codenarcAll ; alert'
 
 # Nice path
 alias path='echo -e ${PATH//:/\\n}'

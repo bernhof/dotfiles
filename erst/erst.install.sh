@@ -16,7 +16,3 @@ echo '{ "bip": "10.20.0.1/16", "hosts": ["tcp://127.0.0.1:2375"] }' | sudo tee /
 
 sudo systemctl daemon-reload
 sudo service docker restart
-
-# Forbind til ERST VPN
-#sudo apt install openconnect -y
-#sudo openconnect vpn.erst.dk

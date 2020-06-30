@@ -13,35 +13,80 @@ opout() {
     export OP_SESSION_my=''
 }
 
-# Lists all items in 1Password
+# Lists titles of all items in 1Password, or, if a pattern is specified, items whose titles match the pattern
 opls() {
-    opin && \
-    op list items | jq -r '.[].overview.title' | sort | ([ -z "$1" ] && cat || grep -i $1)
+    opin
+    if [ "$?" -ne "0" ]; then
+        return $?
+    fi
+    op list items | jq -r '.[].overview.title' | sort | ([ -z "$1" ] && cat || grep -i "$1")
 }
 
-# 1Password get password with name
-pwfind() {
+# Gets the password of the first matching item title (uses regular expression via grep) 
+opfind() {
+    local OPTIND silent displayUserName opt
+    while getopts ":su" opt; do
+        case "${opt}" in
+            s)
+                silent=yes
+                ;;
+            u)
+                displayUserName=yes
+                ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    if [ -z "$1" ]; then
+        echo "You must specify a search criterium" >&2
+        return 1
+    fi
+
     opin
-    if [ "$?" -eq "0" ]; then
-        found=$(opls "$1" | head -n 1)
-        if [ -z "$found" ]; then
-            printf "No items found matching \"$1\"" >&2
-            return 1
-        fi
-        echo "Found \"$found\""
-        pwget "$found"
+    if [ "$?" -ne "0" ]; then
+        return $?
+    fi
+    found=$(opls "$1" | head -n 1)
+    if [ -z "$found" ]; then
+        echo "No items found matching \"$1\"" >&2
+        return 2
+    fi
+    if [ -z "$silent" ]; then
+        echo "Found \"$found\"" >&2
+    fi
+    if [ -z "$displayUserName" ]; then
+        getpw "$found"
+    else
+        getpw -u "$found"
     fi
 }
 
 # Gets a specific password by its exact title (case insensitive)
-pwget() {
-    opin && \
-    op get item "$1" \
-        | jq '.details.fields | map(select(.designation == "password").value)[0]' \
-        | trim \" \
-        | tr -d '\n'
+getpw() {
+    local OPTIND displayUserName opt
+    while getopts ":u" opt; do
+        case "${opt}" in
+            u)
+                displayUserName=yes
+                ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    opin
+    if [ "$?" -ne "0" ]; then
+        return $?
+    fi
+    item=$(op get item "$1")
+    user=$(printf "$item" | jq '.details.fields | map(select(.designation == "username").value)[0]' | trim \")
+    pw=$(printf "$item" | jq '.details.fields | map(select(.designation == "password").value)[0]' | trim \" | tr -d '\n')
+    if [ -n "$displayUserName" ]; then
+        echo $user
+    fi
+    printf $pw
 }
 
-pwcopy() {
-    pwfind "$1" | xclip -sel clip
+# Copies the first password found by its title (reg.ex.)
+copypw() {
+    opfind -s "$1" | xclip -sel clip
 }

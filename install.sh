@@ -3,7 +3,7 @@
 # basic tools
 sudo apt install curl -y
 sudo apt install jq -y #command line json parser
-sudo apt install cifs-utils -y #CIFS/samba tools
+sudo apt install cifs-utils smbclient -y #CIFS/samba tools
 
 # docker
 # https://docs.docker.com/engine/install/ubuntu/
@@ -14,7 +14,7 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 #sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu eoan stable"
 sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 
 # not included in the guide:
 sudo usermod -aG docker $USER
