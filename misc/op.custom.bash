@@ -1,3 +1,5 @@
+# NOTE: Requires "jq" command line json parser
+
 # 1Password sign in
 # Specify -f or --force to sign in even if a session token is present
 opin() {
@@ -55,14 +57,14 @@ opfind() {
         echo "Found \"$found\"" >&2
     fi
     if [ -z "$displayUserName" ]; then
-        getpw "$found"
+        opget "$found"
     else
-        getpw -u "$found"
+        opget -u "$found"
     fi
 }
 
 # Gets a specific password by its exact title (case insensitive)
-getpw() {
+opget() {
     local OPTIND displayUserName opt
     while getopts ":u" opt; do
         case "${opt}" in
@@ -81,12 +83,16 @@ getpw() {
     user=$(printf "$item" | jq '.details.fields | map(select(.designation == "username").value)[0]' | trim \")
     pw=$(printf "$item" | jq '.details.fields | map(select(.designation == "password").value)[0]' | trim \" | tr -d '\n')
     if [ -n "$displayUserName" ]; then
-        echo $user
+        echo "$user"
     fi
-    printf $pw
+    printf "$pw"
 }
 
 # Copies the first password found by its title (reg.ex.)
-copypw() {
+opcopy() {
+    opin
+    if [ "$?" -ne "0" ]; then
+        return $?
+    fi
     opfind -s "$1" | xclip -sel clip
 }
