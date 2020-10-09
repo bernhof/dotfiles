@@ -25,3 +25,12 @@ ltrim() {
 rtrim() {
     sed -E "s/$1$//g"
 }
+
+# Removes all disabled (inactive) snap versions from the system.
+# Can free up space significantly
+snap-prune-versions() {
+    LANG=en_US.UTF-8 snap list --all | awk '/disabled/{print $1, $3}' |
+        while read snapname revision; do
+            sudo snap remove "$snapname" --revision="$revision"
+        done
+}

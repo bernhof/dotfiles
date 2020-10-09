@@ -6,12 +6,12 @@ alias c='xclip -sel clip'
 alias v='xclip -o'
 
 # Gradle:
-alias gw='./gradlew'
-alias gwcb='./gradlew clean bootRun'
-alias gwcc='./gradlew clean check ; alert'
-alias gwccc='./gradlew clean check -DENABLE_CLOVER=true ; alert'
-alias gwct='./gradlew clean test integrationTest ; alert'
-alias gwnarc='./gradlew codenarcAll ; alert'
+alias gw='./gradlew -g ~/.gradle5'
+alias gwcb='gw clean bootRun'
+alias gwcc='gw clean check --continue ; alert'
+alias gwccc='gw clean check -DENABLE_CLOVER=true --continue ; alert'
+alias gwct='gw clean test integrationTest --continue; alert'
+alias gwnarc='gw codenarcAll --continue; alert'
 
 # Nice path
 alias path='echo -e ${PATH//:/\\n}'
