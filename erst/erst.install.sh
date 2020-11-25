@@ -16,3 +16,12 @@ echo '{ "bip": "10.20.0.1/16", "hosts": ["tcp://127.0.0.1:2375"] }' | sudo tee /
 
 sudo systemctl daemon-reload
 sudo service docker restart
+
+# Install redis-cli (https://codewithhugo.com/install-just-redis-cli-on-ubuntu-debian-jessie/)
+cd /tmp
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make
+sudo cp src/redis-cli /usr/local/bin/
+sudo chmod 755 /usr/local/bin/redis-cli

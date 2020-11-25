@@ -40,6 +40,8 @@ sudo snap install intellij-idea-ultimate --classic
 # sdkman
 curl -s "https://get.sdkman.io" | bash
 source ~/.sdkman/bin/sdkman-init.sh
+# automatically apply .sdkmanrc environment definitions:
+sed -i "s/sdkman_auto_env=false/sdkman_auto_env=true/g" ~/.sdkman/etc/config
 
 # Disable Alt+F1 shortcut for home view (clashes with the "Select In..." shortcut in IDEA on Visual Studio key scheme)
 KEYBINDINGS=$(gsettings get org.gnome.desktop.wm.keybindings panel-main-menu | sed "s/\(, \)\?'<Alt>F1'//")
