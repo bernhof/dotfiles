@@ -5,6 +5,7 @@
 export DOCKER_HOST="tcp://127.0.0.1:2375"
 
 oc() {
+    sudo echo "sudo OK"
     local itemname username passcode
     itemname="^ERST VPN$"
     # log into 1password
