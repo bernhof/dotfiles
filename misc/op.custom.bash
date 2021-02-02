@@ -15,6 +15,19 @@ opout() {
     export OP_SESSION_my=''
 }
 
+opfield() {
+    local title field
+    title=${1/\"/\\\"}
+    field=${2/\"/\\\"}
+    op list items | \
+        # get uuid of item:
+        jq -r ".[] | select(.overview.title|test(\"(?i)$title\")) | .uuid" | \
+        # retrieve item details (username, password etc.) using uuid:
+        xargs op get item | \
+        # print value of specified field
+        jq -r ".details.fields | map(select(.designation==\"$field\").value)[0]"
+}
+
 # Lists titles of all items in 1Password, or, if a pattern is specified, items whose titles match the pattern
 opls() {
     opin
