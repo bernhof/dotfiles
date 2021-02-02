@@ -4,6 +4,7 @@
 # ERST docker settings
 export DOCKER_HOST="tcp://127.0.0.1:2375"
 
+# Connect to ERST VPN using openconnect and 1Password
 oc() {
     sudo echo "sudo OK"
     local itemname username passcode
