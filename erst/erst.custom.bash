@@ -5,8 +5,11 @@
 export DOCKER_HOST="tcp://127.0.0.1:2375"
 
 # Connect to ERST VPN using openconnect and 1Password
-oc() {
+vpn() {
     sudo echo "sudo OK"
+    if [ "$?" -ne "0" ]; then
+        return $?
+    fi
     local itemname username passcode
     itemname="^ERST VPN$"
     # log into 1password
