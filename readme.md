@@ -2,12 +2,23 @@
 
 Uses [bash-it](https://github.com/bash-it/bash-it) for shell customization.
 
-## First things first
+## 1. First things first
 
     sudo apt update
     sudo apt install -y git
-    git clone git@github.com:bernhof/dotfiles.git ~/.dotfiles
+    git clone https://github.com/brianjohnsen ~/.dotfiles
     source ~/.dotfiles/install.sh
+
+## 2. Manual steps required
+
+* In Chrome: Set up profiles and sign in to Google accounts
+* [Google Drive](https://drive.google.com): Download user home data
+
+## 3. Enable commits to this repository
+
+    cd ~/.dotfiles
+    git remote remove origin
+    git remote add origin git@github.com:bernhof/dotfiles.git
 
 # Thanks to
 

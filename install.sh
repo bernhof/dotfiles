@@ -5,23 +5,22 @@ sudo apt install curl -y
 sudo apt install jq -y # command line json parser
 sudo apt install cifs-utils smbclient -y # CIFS/samba tools
 sudo apt install pavucontrol -y # PulseAudio Volume Control
+sudo apt install openconnect -y
 
 # docker
 # https://docs.docker.com/engine/install/ubuntu/
 sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 #sudo apt-key fingerprint 0EBFCD88
-# NOTE: for 20.04 there's no "focal" distro yet, so using 19.04 (eoan)
-#sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu eoan stable"
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 
 # not included in the guide:
 sudo usermod -aG docker $USER
 
-# docker compose (NOTE: version hardcoded)
-sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+# docker compose (latest)
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
 # google chrome
@@ -55,14 +54,6 @@ gsettings set org.gnome.desktop.wm.keybindings unmaximize $KEYBINDINGS
 # Show week no. in GNOME calendar
 gsettings set org.gnome.desktop.calendar show-weekdate true
 
-
-# NINE
-
-# Google Drive
-# consider using gdrive, however currently there are issues with Google OAuth and gdrive
-# - see https://github.com/gdrive-org/gdrive/issues/533
-# - find latest at https://github.com/gdrive-org/gdrive#downloads
-
 # EXTRAS
 sudo snap install spotify
 
@@ -84,5 +75,15 @@ sudo unzip /tmp/op.zip -d /usr/local/bin/
 gpg --recv-keys 3FEF9748469ADBE15DA7CA80AC2D62742012EA22 #doesn't seem to work?
 gpg --verify /usr/local/bin/op.sig /usr/local/bin/op
 
+# Google Drive
+# consider using gdrive, however currently there are issues with Google OAuth and gdrive
+# - see https://github.com/gdrive-org/gdrive/issues/533
+# - find latest at https://github.com/gdrive-org/gdrive#downloads
+
 # ERST
 source ~/.dotfiles/erst/erst.install.sh
+
+echo "First-time sign-in to 1Password:"
+op signin my bernhof@gmail.com
+
+echo "End of install script"
