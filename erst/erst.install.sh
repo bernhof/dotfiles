@@ -1,9 +1,9 @@
 # ERST
 mkdir ~/src/erst
 
-sdk install java 8.0.252-open
-sdk install groovy 2.5.11
-sdk install grails 3.3.11
+sudo snap install teams
+
+sdk install java 8.0.265-open
 
 # See also: http://confluence/display/MIT/Kom+Godt+I+Gang+Som+Udvikler
 sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
@@ -17,6 +17,8 @@ echo '{ "bip": "10.20.0.1/16", "hosts": ["tcp://127.0.0.1:2375"] }' | sudo tee /
 sudo systemctl daemon-reload
 sudo service docker restart
 
+sudo apt install make clang -y # allows building redis-cli from source
+make distclean # avoids build errors
 # Install redis-cli (https://codewithhugo.com/install-just-redis-cli-on-ubuntu-debian-jessie/)
 cd /tmp
 wget http://download.redis.io/redis-stable.tar.gz
@@ -25,3 +27,4 @@ cd redis-stable
 make
 sudo cp src/redis-cli /usr/local/bin/
 sudo chmod 755 /usr/local/bin/redis-cli
+cd ~
