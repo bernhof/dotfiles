@@ -1,5 +1,5 @@
 # ERST
-mkdir ~/src/erst
+mkdir ~/src/erst -p
 
 sudo snap install teams
 
