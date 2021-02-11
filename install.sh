@@ -53,6 +53,8 @@ gsettings set org.gnome.desktop.wm.keybindings unmaximize $KEYBINDINGS
 
 # Show week no. in GNOME calendar
 gsettings set org.gnome.desktop.calendar show-weekdate true
+# Use English language, Danish formats
+gsettings set org.gnome.system.locale region 'en_DK.UTF-8'
 
 # EXTRAS
 sudo snap install spotify

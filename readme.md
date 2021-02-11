@@ -20,6 +20,10 @@ Uses [bash-it](https://github.com/bash-it/bash-it) for shell customization.
     git remote remove origin
     git remote add origin git@github.com:bernhof/dotfiles.git
 
+## 4. Restart
+
+    shutdown -r now
+
 # Thanks to
 
 * [@brianjohnsen](https://github.com/brianjohnsen) for help and his [dotfiles](https://github.com/brianjohnsen/dotfiles) repo for inspiration.
