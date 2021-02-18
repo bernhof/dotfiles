@@ -36,6 +36,7 @@ sudo snap install slack --classic
 
 # JAVA DEV ENVIRONMENT
 sudo snap install intellij-idea-ultimate --classic
+sudo snap alias intellij-idea-ultimate idea
 
 # sdkman
 curl -s "https://get.sdkman.io" | bash
