@@ -17,9 +17,10 @@ echo '{ "bip": "10.20.0.1/16", "hosts": ["tcp://127.0.0.1:2375"] }' | sudo tee /
 sudo systemctl daemon-reload
 sudo service docker restart
 
+# Install redis:
 sudo apt install make clang -y # allows building redis-cli from source
-make distclean # avoids build errors
-# Install redis-cli (https://codewithhugo.com/install-just-redis-cli-on-ubuntu-debian-jessie/)
+make distclean                 # avoids build errors
+# Source: https://codewithhugo.com/install-just-redis-cli-on-ubuntu-debian-jessie/
 cd /tmp
 wget http://download.redis.io/redis-stable.tar.gz
 tar xvzf redis-stable.tar.gz
@@ -28,3 +29,5 @@ make
 sudo cp src/redis-cli /usr/local/bin/
 sudo chmod 755 /usr/local/bin/redis-cli
 cd ~
+
+google-chrome http://confluence/x/2oGG # Kom godt i gang som udvikler

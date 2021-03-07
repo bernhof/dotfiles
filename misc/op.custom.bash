@@ -3,109 +3,107 @@
 # 1Password sign in
 # Specify -f or --force to sign in even if a session token is present
 opin() {
-    if [ -z "$OP_SESSION_my" ] || [ "$1" == '--force' ] || [ "$1" == '-f' ]; then
-        token=$(op signin my --raw) && \
-        export OP_SESSION_my=$token
-    fi
+  if [ -z "$OP_SESSION_my" ] || [ "$1" == '--force' ] || [ "$1" == '-f' ]; then
+    token=$(op signin my --raw) &&
+      export OP_SESSION_my=$token
+  fi
 }
 
 opout() {
-    op signout
-    # make sure session token is reset since its used by opsi to check for active session
-    export OP_SESSION_my=''
+  op signout
+  # make sure session token is reset since its used by opsi to check for active session
+  export OP_SESSION_my=''
 }
 
 opfield() {
-    local title field
-    title=${1/\"/\\\"}
-    field=${2/\"/\\\"}
-    op list items | \
-        # get uuid of item:
-        jq -r ".[] | select(.overview.title|test(\"(?i)$title\")) | .uuid" | \
-        # retrieve item details (username, password etc.) using uuid:
-        xargs op get item | \
-        # print value of specified field
-        jq -r ".details.fields | map(select(.designation==\"$field\").value)[0]"
+  local title field uuid
+  title=${1/\"/\\\"}
+  field=${2/\"/\\\"}
+  # get uuid of item:
+  uuid=$(op list items |
+    jq -r ".[] | select(.overview.title|test(\"(?i)$title\")) | .uuid") &&
+    op get item "$uuid" | # print value of specified field
+    jq -r ".details.fields | map(select(.designation==\"$field\").value)[0]"
 }
 
 # Lists titles of all items in 1Password, or, if a pattern is specified, items whose titles match the pattern
 opls() {
-    opin
-    if [ "$?" -ne "0" ]; then
-        return $?
-    fi
-    op list items | jq -r '.[].overview.title' | sort | ([ -z "$1" ] && cat || grep -i "$1")
+  opin
+  if [ "$?" -ne "0" ]; then
+    return $?
+  fi
+  op list items | jq -r '.[].overview.title' | sort | ([ -z "$1" ] && cat || grep -i "$1")
 }
 
-# Gets the password of the first matching item title (uses regular expression via grep) 
+# Gets the password of the first matching item title (uses regular expression via grep)
 opfind() {
-    local OPTIND silent displayUserName opt
-    while getopts ":su" opt; do
-        case "${opt}" in
-            s)
-                silent=yes
-                ;;
-            u)
-                displayUserName=yes
-                ;;
-        esac
-    done
-    shift $((OPTIND-1))
+  local OPTIND silent displayUserName opt
+  while getopts ":su" opt; do
+    case "${opt}" in
+    s)
+      silent=yes
+      ;;
+    u)
+      displayUserName=yes
+      ;;
+    esac
+  done
+  shift $((OPTIND - 1))
 
-    if [ -z "$1" ]; then
-        echo "You must specify a search criterium" >&2
-        return 1
-    fi
+  if [ -z "$1" ]; then
+    echo "You must specify a search criterium" >&2
+    return 1
+  fi
 
-    opin
-    if [ "$?" -ne "0" ]; then
-        return $?
-    fi
-    found=$(opls "$1" | head -n 1)
-    if [ -z "$found" ]; then
-        echo "No items found matching \"$1\"" >&2
-        return 2
-    fi
-    if [ -z "$silent" ]; then
-        echo "Found \"$found\"" >&2
-    fi
-    if [ -z "$displayUserName" ]; then
-        opget "$found"
-    else
-        opget -u "$found"
-    fi
+  opin
+  if [ "$?" -ne "0" ]; then
+    return $?
+  fi
+  found=$(opls "$1" | head -n 1)
+  if [ -z "$found" ]; then
+    echo "No items found matching \"$1\"" >&2
+    return 2
+  fi
+  if [ -z "$silent" ]; then
+    echo "Found \"$found\"" >&2
+  fi
+  if [ -z "$displayUserName" ]; then
+    opget "$found"
+  else
+    opget -u "$found"
+  fi
 }
 
 # Gets a specific password by its exact title (case insensitive)
 opget() {
-    local OPTIND displayUserName opt
-    while getopts ":u" opt; do
-        case "${opt}" in
-            u)
-                displayUserName=yes
-                ;;
-        esac
-    done
-    shift $((OPTIND-1))
+  local OPTIND displayUserName opt
+  while getopts ":u" opt; do
+    case "${opt}" in
+    u)
+      displayUserName=yes
+      ;;
+    esac
+  done
+  shift $((OPTIND - 1))
 
-    opin
-    if [ "$?" -ne "0" ]; then
-        return $?
-    fi
-    item=$(op get item "$1")
-    user=$(printf "$item" | jq '.details.fields | map(select(.designation == "username").value)[0]' | trim \")
-    pw=$(printf "$item" | jq '.details.fields | map(select(.designation == "password").value)[0]' | trim \" | tr -d '\n')
-    if [ -n "$displayUserName" ]; then
-        echo "$user"
-    fi
-    printf "$pw"
+  opin
+  if [ "$?" -ne "0" ]; then
+    return $?
+  fi
+  item=$(op get item "$1")
+  user=$(printf "$item" | jq '.details.fields | map(select(.designation == "username").value)[0]' | trim \")
+  pw=$(printf "$item" | jq '.details.fields | map(select(.designation == "password").value)[0]' | trim \" | tr -d '\n')
+  if [ -n "$displayUserName" ]; then
+    echo "$user"
+  fi
+  printf "$pw"
 }
 
 # Copies the first password found by its title (reg.ex.)
 opcopy() {
-    opin
-    if [ "$?" -ne "0" ]; then
-        return $?
-    fi
-    opfind -s "$1" | xclip -sel clip
+  opin
+  if [ "$?" -ne "0" ]; then
+    return $?
+  fi
+  opfind -s "$1" | xclip -sel clip
 }

@@ -5,9 +5,9 @@
 # basic tools
 sudo apt update
 sudo apt install curl -y
-sudo apt install jq -y # command line json parser
+sudo apt install jq -y                   # command line json parser
 sudo apt install cifs-utils smbclient -y # CIFS/samba tools
-sudo apt install pavucontrol -y # PulseAudio Volume Control
+sudo apt install pavucontrol -y          # PulseAudio Volume Control
 sudo apt install openconnect -y
 
 # docker
@@ -16,7 +16,7 @@ sudo apt-get install apt-transport-https ca-certificates curl gnupg
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo \
   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 
@@ -90,7 +90,14 @@ gpg --verify /usr/local/bin/op.sig /usr/local/bin/op
 # ERST
 source ~/.dotfiles/erst/erst.install.sh
 
-echo "First-time sign-in to 1Password:"
-op signin my bernhof@gmail.com
+echo "First-time sign-in to 1Password: (will keep retrying until sign-in succeeds; press CTRL+C to abort)" &&
+  while [ -z "$OP_SESSION_my" ]; do
+    eval $(op signin my bernhof@gmail.com)
+  done
 
-echo "End of install script"
+# Setup .smbcredentials
+smbitemname="^ERST NC SMB$"
+echo "username=$(opfield "$smbitemname" username)
+password=$(opfield "$smbitemname" password)" >~/.smbcredentials-erst
+
+echo "(End of install script)"
