@@ -9,70 +9,63 @@ export GRAILS_OPTS="-Xmx2G -Xms512m -Dfile.encoding=UTF-8 -Djava.encoding=UTF-8"
 
 # Bash-It:
 copy-bash-it-custom() {
-    rm ~/.bash_it/custom/*custom.bash
-    cp -v $(find $DOTFILES -name *custom.bash) ~/.bash_it/custom/
-    cp -v ${DOTFILES}misc/custom.aliases.bash ~/.bash_it/aliases/
-    source ~/.bashrc
+  rm ~/.bash_it/custom/*custom.bash
+  cp -v $(find $DOTFILES -name *custom.bash) ~/.bash_it/custom/
+  cp -v ${DOTFILES}misc/custom.aliases.bash ~/.bash_it/aliases/
+  source ~/.bashrc
 }
 
 trim() {
-    sed -E "s/^$1|$1$//g"
+  sed -E "s/^$1|$1$//g"
 }
 
 ltrim() {
-    sed -E "s/^$1//g"
+  sed -E "s/^$1//g"
 }
 
 rtrim() {
-    sed -E "s/$1$//g"
+  sed -E "s/$1$//g"
 }
 
 # Removes all disabled (inactive) snap versions from the system.
 # Can free up space significantly
 snap-prune-versions() {
-    LANG=en_US.UTF-8
-    snap list --all | awk '/disabled/{print $1, $3}' |
-        while read snapname revision; do
-            sudo snap remove "$snapname" --revision="$revision"
-        done
+  LANG=en_US.UTF-8
+  snap list --all | awk '/disabled/{print $1, $3}' |
+    while read snapname revision; do
+      sudo snap remove "$snapname" --revision="$revision"
+    done
 }
 
 show-free-space() {
-    df -Th | grep -v fs
+  df -Th | grep -v fs
 }
 
 # source: https://askubuntu.com/a/1161181/1078101
 free-up-space() {
-    show-free-space
+  show-free-space
 
-    # Will need English output for processing
-    LANG=en_GB.UTF-8
+  # Will need English output for processing
+  LANG=en_GB.UTF-8
 
-    ## Clean apt cache
-    sudo apt-get update
-    sudo apt-get -f install
-    sudo apt-get -y autoremove
-    sudo apt-get clean
+  ## Clean apt cache
+  sudo apt-get update
+  sudo apt-get -f install
+  sudo apt-get -y autoremove
+  sudo apt-get clean
 
-    ## Remove old versions of snap packages
-    snap-prune-versions
+  ## Remove old versions of snap packages
+  snap-prune-versions
 
-    ## Set snap versions retain settings
-    if [[ $(snap get system refresh.retain) -ne 2 ]]; then sudo snap set system refresh.retain=2; fi
-    sudo rm -f /var/lib/snapd/cache/*
+  ## Set snap versions retain settings
+  if [[ $(snap get system refresh.retain) -ne 2 ]]; then sudo snap set system refresh.retain=2; fi
+  sudo rm -f /var/lib/snapd/cache/*
 
-    ## Remove old versions of Linux Kernel
-    # This one-liner is deprecated since 18.04
-    # dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | xargs apt-get -y purge
-    # New 2 lines to remove old kernels
-    dpkg --list | grep 'linux-image' | awk '{ print $2 }' | sort -V | sed -n '/'"$(uname -r | sed "s/\([0-9.-]*\)-\([^0-9]\+\)/\1/")"'/q;p' | sudo xargs apt-get -y purge
-    dpkg --list | grep 'linux-headers' | awk '{ print $2 }' | sort -V | sed -n '/'"$(uname -r | sed "s/\([0-9.-]*\)-\([^0-9]\+\)/\1/")"'/q;p' | sudo xargs apt-get -y purge
+  ## Rotate and delete old logs
+  /etc/cron.daily/logrotate
+  sudo find /var/log -type f -iname *.gz -delete
+  sudo journalctl --rotate
+  sudo journalctl --vacuum-time=1s
 
-    ## Rotate and delete old logs
-    /etc/cron.daily/logrotate
-    sudo find /var/log -type f -iname *.gz -delete
-    sudo journalctl --rotate
-    sudo journalctl --vacuum-time=1s
-
-    show-free-space
+  show-free-space
 }
