@@ -1,38 +1,38 @@
 # NOTE: Requires "jq" command line json parser
 
 # 1Password sign in
-# Specify -f or --force to sign in even if a session token is present
+# Specify -f to sign in even if a session token is present
 opin() {
-  if [ -z "$OP_SESSION_my" ] || [ "$1" == '--force' ] || [ "$1" == '-f' ]; then
+  local time_since_login session_duration_seconds
+  time_since_login="$(bc <<<"$(date +%s) - ${OP_SESSION_CREATED:-0}")"
+  session_duration_seconds=1800 # 30 minutes
+  if [ -z "$OP_SESSION_my" ] || [ "$time_since_login" -ge "$session_duration_seconds" ] || [ "$1" == '-f' ]; then
     token=$(op signin my --raw) &&
-      export OP_SESSION_my=$token
+      export OP_SESSION_my="$token" &&
+      export OP_SESSION_CREATED="$(date +%s)"
   fi
 }
 
 opout() {
-  op signout
-  # make sure session token is reset since its used by opsi to check for active session
-  export OP_SESSION_my=''
+  op signout && export OP_SESSION_my='' && export OP_SESSION_CREATED=0
 }
 
 opfield() {
   local title field uuid
-  title=${1/\"/\\\"}
-  field=${2/\"/\\\"}
-  # get uuid of item:
-  uuid=$(op list items |
-    jq -r ".[] | select(.overview.title|test(\"(?i)$title\")) | .uuid") &&
+  opin &&
+    title=${1/\"/\\\"} &&
+    field=${2/\"/\\\"} &&
+    # get uuid of item:
+    uuid=$(op list items |
+      jq -r ".[] | select(.overview.title|test(\"(?i)$title\")) | .uuid") &&
     op get item "$uuid" | # print value of specified field
-    jq -r ".details.fields | map(select(.designation==\"$field\").value)[0]"
+      jq -r ".details.fields | map(select(.designation==\"$field\").value)[0]"
 }
 
 # Lists titles of all items in 1Password, or, if a pattern is specified, items whose titles match the pattern
 opls() {
-  opin
-  if [ "$?" -ne "0" ]; then
-    return $?
-  fi
-  op list items | jq -r '.[].overview.title' | sort | ([ -z "$1" ] && cat || grep -i "$1")
+  opin &&
+    op list items | jq -r '.[].overview.title' | sort | ([ -z "$1" ] && cat || grep -i "$1")
 }
 
 # Gets the password of the first matching item title (uses regular expression via grep)
@@ -50,28 +50,19 @@ opfind() {
   done
   shift $((OPTIND - 1))
 
-  if [ -z "$1" ]; then
-    echo "You must specify a search criterium" >&2
+  [ -z "$1" ] &&
+    echo "You must specify a search criterium" >&2 &&
     return 1
-  fi
 
-  opin
-  if [ "$?" -ne "0" ]; then
-    return $?
-  fi
+  opin || return $?
   found=$(opls "$1" | head -n 1)
-  if [ -z "$found" ]; then
-    echo "No items found matching \"$1\"" >&2
+
+  [ -z "$found" ] &&
+    echo "No items found matching \"$1\"" >&2 &&
     return 2
-  fi
-  if [ -z "$silent" ]; then
-    echo "Found \"$found\"" >&2
-  fi
-  if [ -z "$displayUserName" ]; then
-    opget "$found"
-  else
-    opget -u "$found"
-  fi
+
+  [ -z "$silent" ] && echo "Found \"$found\"" >&2
+  ([ -z "$displayUserName" ] && opget "$found") || opget -u "$found"
 }
 
 # Gets a specific password by its exact title (case insensitive)
@@ -101,9 +92,6 @@ opget() {
 
 # Copies the first password found by its title (reg.ex.)
 opcopy() {
-  opin
-  if [ "$?" -ne "0" ]; then
-    return $?
-  fi
-  opfind -s "$1" | xclip -sel clip
+  opin &&
+    opfind -s "$1" | xclip -sel clip
 }
