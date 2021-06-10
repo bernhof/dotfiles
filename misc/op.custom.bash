@@ -17,18 +17,6 @@ opout() {
   op signout && export OP_SESSION_my='' && export OP_SESSION_CREATED=0
 }
 
-opfield() {
-  local title field uuid
-  opin &&
-    title=${1/\"/\\\"} &&
-    field=${2/\"/\\\"} &&
-    # get uuid of item:
-    uuid=$(op list items |
-      jq -r ".[] | select(.overview.title|test(\"(?i)$title\")) | .uuid") &&
-    op get item "$uuid" | # print value of specified field
-      jq -r ".details.fields | map(select(.designation==\"$field\").value)[0]"
-}
-
 # Lists titles of all items in 1Password, or, if a pattern is specified, items whose titles match the pattern
 opls() {
   opin &&
@@ -63,31 +51,6 @@ opfind() {
 
   [ -z "$silent" ] && echo "Found \"$found\"" >&2
   ([ -z "$displayUserName" ] && opget "$found") || opget -u "$found"
-}
-
-# Gets a specific password by its exact title (case insensitive)
-opget() {
-  local OPTIND displayUserName opt
-  while getopts ":u" opt; do
-    case "${opt}" in
-    u)
-      displayUserName=yes
-      ;;
-    esac
-  done
-  shift $((OPTIND - 1))
-
-  opin
-  if [ "$?" -ne "0" ]; then
-    return $?
-  fi
-  item=$(op get item "$1")
-  user=$(printf "$item" | jq '.details.fields | map(select(.designation == "username").value)[0]' | trim \")
-  pw=$(printf "$item" | jq '.details.fields | map(select(.designation == "password").value)[0]' | trim \" | tr -d '\n')
-  if [ -n "$displayUserName" ]; then
-    echo "$user"
-  fi
-  printf "$pw"
 }
 
 # Copies the first password found by its title (reg.ex.)
