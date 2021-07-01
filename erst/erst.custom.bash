@@ -1,6 +1,9 @@
 # COPY
 # cp -v ~/.dotfiles/erst/erst.bash ~/.bash_it/custom/
 
+#export GRAILS_OPTS="-Xmx4G -Xms512m -Dfile.encoding=UTF-8 -Djava.encoding=UTF-8"
+export GRAILS_OPTS="-Xmx4G -Xms512m -XX:MaxPermSize=512m -Dfile.encoding=UTF-8 -Djava.encoding=UTF-8" # Fixes issues with Grails 2/Java 7 PermGen during compile
+
 # ERST docker settings
 export DOCKER_HOST="tcp://127.0.0.1:2375"
 

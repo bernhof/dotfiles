@@ -64,6 +64,9 @@ gsettings set org.gnome.system.locale region 'en_DK.UTF-8'
 # EXTRAS
 sudo snap install spotify
 
+# ADDITIONAL INSTALL SCRIPTS
+source ~/.dotfiles/install.dell-precision-5550.bash
+
 # BASH-IT
 git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it
 git ~/.bash_it/install.sh --silent
