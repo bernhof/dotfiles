@@ -8,7 +8,8 @@ sudo apt install curl -y
 sudo apt install jq -y                   # command line json parser
 sudo apt install cifs-utils smbclient -y # CIFS/samba tools
 sudo apt install pavucontrol -y          # PulseAudio Volume Control
-sudo apt install openconnect -y
+sudo apt install openconnect -y          # OpenConnect VPN client
+sudo apt install golang -y
 
 # docker
 # https://docs.docker.com/engine/install/ubuntu/
@@ -30,6 +31,9 @@ sudo chmod +x /usr/local/bin/docker-compose
 # google chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/chrome.deb
 sudo dpkg -i /tmp/chrome.deb
+
+# drive (cmdline for Google Drive)
+go get -u -v github.com/odeke-em/drive/cmd/drive # (can take a while)
 
 # vscode
 sudo snap install code --classic
