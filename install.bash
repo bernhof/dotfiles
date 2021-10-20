@@ -10,6 +10,7 @@ sudo apt install cifs-utils smbclient -y # CIFS/samba tools
 sudo apt install pavucontrol -y          # PulseAudio Volume Control
 sudo apt install openconnect -y          # OpenConnect VPN client
 sudo apt install golang -y
+sudo apt install meld -y                 # Meld diff tool
 
 # docker
 # https://docs.docker.com/engine/install/ubuntu/
@@ -82,12 +83,22 @@ bash-it enable completion bash-it git gradle grails sdkman system
 source ~/.dotfiles/misc/custom.bash
 copy-bash-it-custom
 
-# 1Password
+# 1Password CLI
 # https://app-updates.agilebits.com/product_history/CLI
-wget https://cache.agilebits.com/dist/1P/op/pkg/v1.8.0/op_linux_amd64_v1.8.0.zip -O /tmp/op.zip
+wget https://cache.agilebits.com/dist/1P/op/pkg/v1.12.2/op_linux_amd64_v1.12.2.zip -O /tmp/op.zip
 sudo unzip /tmp/op.zip -d /usr/local/bin/
 gpg --recv-keys 3FEF9748469ADBE15DA7CA80AC2D62742012EA22 #doesn't seem to work?
 gpg --verify /usr/local/bin/op.sig /usr/local/bin/op
+
+# 1Password desktop client
+# https://support.1password.com/install-linux/
+ curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+ echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee /etc/apt/sources.list.d/1password.list
+ sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+ curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+ sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+ curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+sudo apt update && sudo apt install 1password
 
 # Google Drive
 # consider using gdrive, however currently there are issues with Google OAuth and gdrive
