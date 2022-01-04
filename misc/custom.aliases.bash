@@ -6,7 +6,7 @@ alias c='xclip -sel clip'
 alias v='xclip -o'
 
 # Gradle:
-alias gw='./gradlew -g ~/.gradle5'
+alias gw='./gradlew -g ~/.gradle5 --info'
 alias gwb='gw bootRun'
 alias gwcb='gw clean bootRun'
 alias gwcc='gw clean check --continue ; alert'
@@ -14,9 +14,9 @@ alias gwnarc='gw codenarcAll --continue; alert'
 
 # Grails:
 alias grw='./grailsw'
-alias grwc='grw clean && grw compile'
-alias grwcr='grw clean && grw compile && grw run-app'
-alias grwct='grw clean && grw compile && grw test-app'
+alias grwc='grw clean-all && grw compile'
+alias grwcr='grw clean-all && grw compile && grw run-app'
+alias grwct='grw clean-all && grw compile && grw test-app'
 
 # Nice path
 alias path='echo -e ${PATH//:/\\n}'
