@@ -4,13 +4,25 @@
 
 # basic tools
 sudo apt update
+sudo apt -y upgrade
 sudo apt install curl -y
 sudo apt install jq -y                   # command line json parser
 sudo apt install cifs-utils smbclient -y # CIFS/samba tools
 sudo apt install pavucontrol -y          # PulseAudio Volume Control
 sudo apt install openconnect -y          # OpenConnect VPN client
-sudo apt install golang -y
 sudo apt install meld -y                 # Meld diff tool
+#sudo apt install golang -y # Golang is outdated here, is installed manually instead, see below
+
+# BASH-IT
+git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it
+git ~/.bash_it/install.sh --silent
+
+bash-it enable plugin git sdkman
+bash-it enable completion bash-it git gradle grails sdkman system kubectl
+
+# Let all *custom.bash files be run at start of every terminal
+source ~/.dotfiles/misc/custom.bash
+copy-bash-it-custom
 
 # docker
 # https://docs.docker.com/engine/install/ubuntu/
@@ -29,12 +41,24 @@ sudo usermod -aG docker $USER
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
+# golang (mainly to enable "go install" command)
+# see https://go.dev/doc/install for latest binary version
+wget https://go.dev/dl/go1.17.5.linux-amd64.tar.gz -O /tmp/go.tar.gz
+rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.tar.gz
+
+# kind
+# https://kind.sigs.k8s.io/docs/user/quick-start with modifications:
+go install -v sigs.k8s.io/kind@latest
+
+# kubectl
+sudo snap install kubectl --classic
+
 # google chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/chrome.deb
 sudo dpkg -i /tmp/chrome.deb
 
 # drive (cmdline for Google Drive)
-go get -u -v github.com/odeke-em/drive/cmd/drive # (can take a while)
+go install -v github.com/odeke-em/drive/cmd/drive@latest # (can take a while)
 
 # vscode
 sudo snap install code --classic
@@ -71,17 +95,6 @@ sudo snap install spotify
 
 # ADDITIONAL INSTALL SCRIPTS
 source ~/.dotfiles/install.dell-precision-5550.bash
-
-# BASH-IT
-git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it
-git ~/.bash_it/install.sh --silent
-
-bash-it enable plugin git sdkman
-bash-it enable completion bash-it git gradle grails sdkman system
-
-# Let all *custom.bash files be run at start of every terminal
-source ~/.dotfiles/misc/custom.bash
-copy-bash-it-custom
 
 # 1Password CLI
 # https://app-updates.agilebits.com/product_history/CLI

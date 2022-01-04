@@ -6,7 +6,7 @@ export BASH_IT_THEME=bobby
 export THEME_SHOW_CLOCK_CHAR=false
 export DOTFILES=~/.dotfiles/
 export GRAILS_OPTS="-Xmx2G -Xms512m -Dfile.encoding=UTF-8 -Djava.encoding=UTF-8"
-export PATH=$PATH:$HOME/go/bin
+export PATH=$PATH:$HOME/go/bin:$HOME/scripts:/usr/local/go/bin
 
 # Bash-It:
 copy-bash-it-custom() {
