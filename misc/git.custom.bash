@@ -71,6 +71,5 @@ git-prune-branches() {
 # Creates a new branch with a (cleaned up) name based on an arbitrary string.
 git-new-branch() {
     new_branch_name=`echo $@ | sed -E 's/[^0-9a-zA-Zæøå _\-\()]/_/g; s/ /_/g; s/_+/_/g'` &&
-        echo "Using branch name: '$new_branch_name'" &&
         git checkout -b "$new_branch_name"
 }
