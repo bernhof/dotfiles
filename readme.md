@@ -6,7 +6,7 @@ Uses [bash-it](https://github.com/bash-it/bash-it) for shell customization.
 
     sudo apt update
     sudo apt install -y git
-    git clone https://github.com/brianjohnsen ~/.dotfiles
+    git clone https://github.com/bernhof/dotfiles ~/.dotfiles
     source ~/.dotfiles/install.sh
 
 ## 2. Manual steps required
