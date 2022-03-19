@@ -1,0 +1,23 @@
+flush ruleset
+table inet filter {
+    chain input {
+        type filter hook input priority 0; policy drop;
+        ct state 0x1 drop
+        ct state { 0x2, 0x4 } accept
+        iifname "br-*" accept
+        iifname "docker*" accept
+        iif "lo" accept
+        iif != "lo" ip daddr 127.0.0.0/8 drop
+        iif != "lo" ip6 daddr ::1 drop
+        ip protocol 1 accept
+        ip6 nexthdr 58 accept
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy accept;
+    }
+
+    chain output {
+        type filter hook output priority 0; policy accept;
+    }
+}

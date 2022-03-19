@@ -1,7 +1,9 @@
+echo "Laver ERST-specifik opsætning..."
+
 # ERST
 mkdir ~/src/erst -p
 
-sudo snap install teams
+#sudo snap install teams # pt. fungerer Teams bedre direkte i Chrome
 
 sdk install java 8.0.265-open
 

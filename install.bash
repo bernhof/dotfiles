@@ -7,6 +7,7 @@ sudo apt update
 sudo apt -y upgrade
 sudo apt install curl -y
 sudo apt install jq -y                   # command line json parser
+sudo apt install nft -y                  # nftables firewall
 sudo apt install cifs-utils smbclient -y # CIFS/samba tools
 sudo apt install pavucontrol -y          # PulseAudio Volume Control
 sudo apt install openconnect -y          # OpenConnect VPN client
@@ -96,22 +97,24 @@ sudo snap install spotify
 # ADDITIONAL INSTALL SCRIPTS
 source ~/.dotfiles/install.dell-precision-5550.bash
 
-# 1Password CLI
-# https://app-updates.agilebits.com/product_history/CLI
-wget https://cache.agilebits.com/dist/1P/op/pkg/v1.12.2/op_linux_amd64_v1.12.2.zip -O /tmp/op.zip
-sudo unzip /tmp/op.zip -d /usr/local/bin/
-gpg --recv-keys 3FEF9748469ADBE15DA7CA80AC2D62742012EA22 #doesn't seem to work?
-gpg --verify /usr/local/bin/op.sig /usr/local/bin/op
-
-# 1Password desktop client
+# 1Password CLI & Desktop Client
 # https://support.1password.com/install-linux/
- curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
- echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee /etc/apt/sources.list.d/1password.list
- sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
- curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
- sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
- curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
-sudo apt update && sudo apt install 1password
+curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+  sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable main" |
+  sudo tee /etc/apt/sources.list.d/1password.list
+sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | \
+  sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+  sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+
+sudo apt update && sudo apt install 1password 1password-cli -y
+
+# Netfilter (nftables) setup 
+### skal lige sætte mig ind i dette inden anvendelse
+#nft -f ~/.dotfiles/misc/nftables.docker.rules
 
 # Google Drive
 # consider using gdrive, however currently there are issues with Google OAuth and gdrive
@@ -119,16 +122,16 @@ sudo apt update && sudo apt install 1password
 # - find latest at https://github.com/gdrive-org/gdrive#downloads
 
 # ERST
-source ~/.dotfiles/erst/erst.install.sh
+source ~/.dotfiles/erst/erst.install.bash
 
 echo "First-time sign-in to 1Password: (will keep retrying until sign-in succeeds; press CTRL+C to abort)" &&
   while [ -z "$OP_SESSION_my" ]; do
-    eval $(op signin my bernhof@gmail.com)
+    eval $(op account add --email bernhof@gmail.com --address my.1password.com)
   done
 
 # Setup .smbcredentials
 smbitemname="^ERST NC SMB$"
-echo "username=$(opfield "$smbitemname" username)
-password=$(opfield "$smbitemname" password)" >~/.smbcredentials-erst
+echo "username=$(op item get "$smbitemname" --fields username)
+password=$(op item get "$smbitemname" --fields password)" >~/.smbcredentials-erst
 
 echo "(End of install script)"
