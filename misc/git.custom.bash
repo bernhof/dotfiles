@@ -1,11 +1,15 @@
+#!/bin/bash
+
 # squash all commits into one (https://stackoverflow.com/a/47837371/137471)
-alias git-squash='git reset --soft HEAD~$(git rev-list --count HEAD ^master)'
+alias git-squash-branch='git reset --soft HEAD~$(git rev-list --count HEAD ^master)'
 alias git-branch-name='git rev-parse --abbrev-ref HEAD'
+alias gc='git checkout'
+alias pull='git pull --rebase'
 
 # Displays git log with graph and colors
 git-changes() {
     AUTHOR="--author `git config user.email`"
-    if [ "$1" == "--all" ] ; then
+    if [ "$1" = "--all" ] ; then
         AUTHOR=""
     fi
 
@@ -73,4 +77,23 @@ git-new-branch() {
     # use , as seperator to allow matching / in pattern
     new_branch_name=`echo $@ | sed -E 's,[^0-9a-zA-Zæøå /()_\-],_,g; s, ,_,g; s,_+,_,g'` &&
         git checkout -b "$new_branch_name"
+}
+
+# Cleans repo by removing *all* unversioned and ignored files. First, shows what will be cleaned, then asks for confirmation.
+git-clean-all() {
+  echo 'Clean would result in the following:' &&
+    git clean -xdn &&
+    echo '------------------------------------' &&
+    read -p 'Continue with clean? (y/N): ' && [[ "$REPLY" = 'y' ]] &&
+    git clean -xdf || echo 'Clean aborted.'
+}
+
+# Prepares local repo for review of a specific branch. Stores any uncommitted changes before checking out the latest version of the specified branch
+review() {
+    [[ -z "$1" ]] && echo 'Please specify a branch name to review.' || (
+        git fetch origin "$1" &&
+        git stash push -m "Stash before review of $1" &&
+        git checkout "$1" &&
+        git merge &&
+        echo "Ready for review: $1")
 }

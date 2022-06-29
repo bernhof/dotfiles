@@ -121,17 +121,12 @@ sudo apt update && sudo apt install 1password 1password-cli -y
 # - see https://github.com/gdrive-org/gdrive/issues/533
 # - find latest at https://github.com/gdrive-org/gdrive#downloads
 
-# ERST
-source ~/.dotfiles/erst/erst.install.bash
-
-echo "First-time sign-in to 1Password: (will keep retrying until sign-in succeeds; press CTRL+C to abort)" &&
+echo "First-time sign-in to 1Password: (will keep retrying until sign-in succeeds; press CTRL+C to abort install script)" &&
   while [ -z "$OP_SESSION_my" ]; do
     eval $(op account add --email bernhof@gmail.com --address my.1password.com)
   done
 
-# Setup .smbcredentials
-smbitemname="^ERST NC SMB$"
-echo "username=$(op item get "$smbitemname" --fields username)
-password=$(op item get "$smbitemname" --fields password)" >~/.smbcredentials-erst
+# ERST
+source ~/.dotfiles/erst/erst.install.bash
 
 echo "(End of install script)"
