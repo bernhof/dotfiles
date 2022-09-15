@@ -6,8 +6,6 @@ alias git-branch-name='git rev-parse --abbrev-ref HEAD'
 alias gc='git checkout'
 # Always pulls using rebase rather than merge (to avoid unnecessary merge commits when pulling):
 alias pull='git pull --rebase'
-# Auto-create remote branch when pushing:
-alias push='git push || git push --set-upstream origin $(git-branch-name)'
 
 # Displays git log with graph and colors
 git-changes() {
@@ -99,4 +97,9 @@ review() {
         git checkout "$1" &&
         git merge &&
         echo "Ready for review: $1")
+}
+
+push() {
+    # Auto-create remote branch when pushing:
+    git push $@ || git push --set-upstream origin $(git-branch-name) $@
 }
