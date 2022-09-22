@@ -9,7 +9,8 @@ alias v='xclip -o'
 alias gw='./gradlew -g ~/.gradle5 --info'
 alias gwb='gw bootRun'
 alias gwcb='gw clean bootRun'
-alias gwcc='gw clean check --continue ; alert'
+alias gwct='gw clean test codenarcAll --continue; alert'
+alias gwcc='gw clean check --continue; alert'
 alias gwnarc='gw codenarcAll --continue; alert'
 
 # Grails:
