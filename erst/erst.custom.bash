@@ -9,19 +9,23 @@ export GRAILS_OPTS="-Xmx4G -Xms512m -XX:MaxPermSize=512m -Dfile.encoding=UTF-8 -
 # Connect to ERST VPN using openconnect and 1Password
 vpn() {
     local itemname username passcode
-    sudo echo "sudo OK" &&
+    # Check connection before asking for passwords to avoid having to enter them multiple times.
+    checkconnection &&
+        sudo echo "sudo OK" &&
         itemname="ERST SIT VPN" &&
         opin && # log into 1password
         username=$(op item get "$itemname" --fields username) &&
         # pipe password on stdin line 1, passcode on line 2
         (echo $(op item get "$itemname" --fields password); echo $(op item get "$itemname" --otp)) | \
-            sudo ~/src/gitlab/openconnect/openconnect/openconnect ext2.statens-it.dk --passwd-on-stdin --user "$username" --local-id device_uniqueid="`lsblk -r -o mountpoint,uuid |  grep '^/ ' |  cut -c3- |  tr -d '\n' | sha1sum | cut -d\  -f1 | tr '[:lower:]' '[:upper:]'`"
+            sudo ~/src/gitlab/openconnect/openconnect/openconnect ext3.statens-it.dk --passwd-on-stdin --user "$username" --local-id device_uniqueid="`lsblk -r -o mountpoint,uuid |  grep '^/ ' |  cut -c3- |  tr -d '\n' | sha1sum | cut -d\  -f1 | tr '[:lower:]' '[:upper:]'`"
 }
 
-# Connect to ERST VPN using openconnect and 1Password - manual passcode prompt
+# Connect to ERST VPN using openconnect and 1Password - manual OTP prompt
 vpnmanual() {
     local itemname username passcode
-    sudo echo "sudo OK" &&
+    # Check connection before asking for passwords to avoid having to enter them multiple times.
+    checkconnection && 
+        sudo echo "sudo OK" &&
         itemname="ERST SIT VPN" &&
         opin && # log into 1password
         username=$(op item get "$itemname" --fields username) &&
@@ -31,6 +35,10 @@ vpnmanual() {
         # waits for user input:
         (echo $(op item get "$itemname" --fields password); read -s passcode; echo $passcode) | \
             sudo ~/src/gitlab/openconnect/openconnect/openconnect ext2.statens-it.dk --passwd-on-stdin --user "$username" --local-id device_uniqueid="`lsblk -r -o mountpoint,uuid |  grep '^/ ' |  cut -c3- |  tr -d '\n' | sha1sum | cut -d\  -f1 | tr '[:lower:]' '[:upper:]'`"
+}
+
+checkconnection() {
+    wget -q --spider http://google.com || (echo "No internet connection!"; exit 1)
 }
 
 kodestandard() {
