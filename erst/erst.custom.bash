@@ -3,9 +3,6 @@
 
 alias t69='clear && ssh s-app-t69'
 
-#export GRAILS_OPTS="-Xmx4G -Xms512m -Dfile.encoding=UTF-8 -Djava.encoding=UTF-8"
-export GRAILS_OPTS="-Xmx4G -Xms512m -XX:MaxPermSize=512m -Dfile.encoding=UTF-8 -Djava.encoding=UTF-8" # Fixes issues with Grails 2/Java 7 PermGen during compile
-
 # Connect to ERST VPN using openconnect and 1Password
 vpn() {
     local itemname username passcode
