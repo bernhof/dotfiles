@@ -14,3 +14,6 @@ opin() {
 opout() {
   op signout && export OP_SESSION_my='' && export OP_SESSION_CREATED=0
 }
+
+# Enable completion for 1Password CLI
+source <(op completion bash)
