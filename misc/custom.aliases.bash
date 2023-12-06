@@ -6,7 +6,7 @@ alias c='xclip -sel clip'
 alias v='xclip -o'
 
 # Gradle:
-alias gw='./gradlew -g ~/.gradle5 --info'
+alias gw='./gradlew --info'
 alias gwb='gw bootRun'
 alias gwcb='gw clean bootRun'
 alias gwct='gw clean test codenarcAll --continue; alert'
