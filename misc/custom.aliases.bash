@@ -23,11 +23,11 @@ alias grwct='grw clean-all && grw compile && grw test-app'
 alias path='echo -e ${PATH//:/\\n}'
 
 # Docker compose
-alias dc='docker-compose'
+alias dc='docker compose'
 
 function dcr() {
-    docker-compose stop $@ &&
-    docker-compose up -d --build $@
+    docker compose stop $@ &&
+    docker compose up -d --build $@
 }
 
 function dcrf() {
