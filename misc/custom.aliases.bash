@@ -33,6 +33,3 @@ function dcr() {
 function dcrf() {
     dcr "$@" && dc logs -f "$@"
 }
-
-# From: http://askubuntu.com/questions/409611/desktop-notification-when-long-running-commands-complete
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'

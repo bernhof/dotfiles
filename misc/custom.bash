@@ -7,14 +7,14 @@ export PATH=$PATH:$HOME/go/bin:$HOME/scripts:/usr/local/go/bin
 # Bash-It:
 copy-bash-it-custom() {
   rm ~/.bash_it/custom/*custom.bash
-  for f in "${DOTFILES}"misc/*custom.bash; do
+  for f in "${DOTFILES}"**/*custom.bash; do
       cp -v "$f" ~/.bash_it/custom/
   done
   cp -v "${DOTFILES}misc/custom.aliases.bash" ~/.bash_it/aliases/
   cp -v "${DOTFILES}home/.bash_completion" ~/.bash_completion
   # https://github.com/cykerway/complete-alias:
   cp -v "${DOTFILES}home/.complete_alias" ~/.complete_alias
-  source ~/.bashrc
+  bashit reload
 }
 
 trim() {
