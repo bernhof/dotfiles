@@ -26,12 +26,12 @@ alias path='echo -e ${PATH//:/\\n}'
 alias dc='docker compose'
 
 function dcr() {
-    docker compose stop $@ &&
-    docker compose up -d --build $@
+    docker compose stop "$@" &&
+    docker compose up -d --build "$@"
 }
 
 function dcrf() {
-    dcr $@ && dc logs -f $@
+    dcr "$@" && dc logs -f "$@"
 }
 
 # From: http://askubuntu.com/questions/409611/desktop-notification-when-long-running-commands-complete
