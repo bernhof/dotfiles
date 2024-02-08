@@ -14,7 +14,7 @@ vpn() {
         username=$(op item get "$itemname" --fields username) &&
         # pipe password on stdin line 1, passcode on line 2
         (echo $(op item get "$itemname" --fields password); echo $(op item get "$itemname" --otp)) | \
-            sudo ~/src/gitlab/openconnect/openconnect/openconnect ext2.statens-it.dk --passwd-on-stdin --user "$username" --local-id device_uniqueid="`lsblk -r -o mountpoint,uuid |  grep '^/ ' |  cut -c3- |  tr -d '\n' | sha1sum | cut -d\  -f1 | tr '[:lower:]' '[:upper:]'`"
+            sudo ~/src/gitlab/openconnect/openconnect/openconnect "${1:-ext2.statens-it.dk}" --passwd-on-stdin --user "$username" --local-id device_uniqueid="`lsblk -r -o mountpoint,uuid |  grep '^/ ' |  cut -c3- |  tr -d '\n' | sha1sum | cut -d\  -f1 | tr '[:lower:]' '[:upper:]'`"
 }
 
 # Connect to ERST VPN using openconnect and 1Password - manual OTP prompt
@@ -31,7 +31,7 @@ vpnmanual() {
         # we need to create an empty prompt for this, which will pause openconnect while it
         # waits for user input:
         (echo $(op item get "$itemname" --fields password); read -s passcode; echo $passcode) | \
-            sudo ~/src/gitlab/openconnect/openconnect/openconnect ext2.statens-it.dk --passwd-on-stdin --user "$username" --local-id device_uniqueid="`lsblk -r -o mountpoint,uuid |  grep '^/ ' |  cut -c3- |  tr -d '\n' | sha1sum | cut -d\  -f1 | tr '[:lower:]' '[:upper:]'`"
+            sudo ~/src/gitlab/openconnect/openconnect/openconnect "${1:-ext2.statens-it.dk}" --passwd-on-stdin --user "$username" --local-id device_uniqueid="`lsblk -r -o mountpoint,uuid |  grep '^/ ' |  cut -c3- |  tr -d '\n' | sha1sum | cut -d\  -f1 | tr '[:lower:]' '[:upper:]'`"
 }
 
 checkconnection() {
